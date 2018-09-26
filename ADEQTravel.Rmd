@@ -1,0 +1,302 @@
+---
+title: "ADEQTravel"
+author: "Emily Walkenhorst"
+date: "Sept. 25, 2018"
+output: html_document
+---
+#Load packages
+```
+library(dplyr)
+library(readr)
+```
+#Import data
+```
+exp_18 <- read.csv("Data/Expenditures_overview_2018.csv")
+exp_17 <- read.csv("Data/Expenditures_overview_2017.csv")
+exp_16 <- read.csv("Data/Expenditures_overview_2016.csv")
+exp_15 <- read.csv("Data/Expenditures_overview_2015.csv")
+exp_14 <- read.csv("Data/Expenditures_overview_2014.csv")
+exp_13 <- read.csv("Data/Expenditures_overview_2013.csv")
+```
+#To see how much each state agency spent on total travel annually
+```
+state_travelexp_18 <- filter(exp_18, Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category== "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER" | Category == "09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal18=sum(Expenditure))
+state_travelexp_17 <- filter(exp_17, Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER" | Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal17=sum(Expenditure))
+state_travelexp_16 <- filter(exp_16, Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER" | Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal16=sum(Expenditure))
+state_travelexp_15 <- filter(exp_15, Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER" | Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal15=sum(Expenditure))
+state_travelexp_14 <- filter(exp_14, Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER" | Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal14=sum(Expenditure))
+state_travelexp_13 <- filter(exp_13, Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER" | Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal13=sum(Expenditure))
+state_travelexp_13_18 <- full_join(state_travelexp_18, state_travelexp_17, by='Agency') %>%
+  full_join(., state_travelexp_16, by = 'Agency') %>%
+  full_join(., state_travelexp_15, by = 'Agency') %>%
+  full_join(., state_travelexp_14, by = 'Agency') %>%
+  full_join(., state_travelexp_13, by = 'Agency') %>%
+  select(Agency, statetotal13, statetotal14, statetotal15, statetotal16, statetotal17, statetotal18)
+state_travelexp <- mutate(state_travelexp_13_18, pct_chg_13_18=(statetotal18-statetotal13)/statetotal13) %>%
+  mutate(., total_chg_13_18=statetotal18-statetotal13) %>%
+  mutate(., pct_chg_17_18=(statetotal18-statetotal17)/statetotal17) %>%
+  mutate(., total_chg_17_18=statetotal18-statetotal17)
+write_csv(state_travelexp, "state_travelexp.csv")
+```
+#To see how much each state agency spent on conference travel annually
+```
+state_09travelexp_18 <- filter(exp_18, Category=="09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal18=sum(Expenditure))
+state_09travelexp_17 <- filter(exp_17, Category=="09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal17=sum(Expenditure))
+state_09travelexp_16 <- filter(exp_16, Category=="09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal16=sum(Expenditure))
+state_09travelexp_15 <- filter(exp_15, Category=="09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal15=sum(Expenditure))
+state_09travelexp_14 <- filter(exp_14, Category=="09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal14=sum(Expenditure))
+state_09travelexp_13 <- filter(exp_13, Category=="09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal13=sum(Expenditure))
+state_09travelexp_13_18 <- full_join(state_09travelexp_18, state_09travelexp_17, by='Agency') %>%
+  full_join(., state_09travelexp_16, by = 'Agency') %>%
+  full_join(., state_09travelexp_15, by = 'Agency') %>%
+  full_join(., state_09travelexp_14, by = 'Agency') %>%
+  full_join(., state_09travelexp_13, by = 'Agency') %>%
+  select(Agency, statetotal13, statetotal14, statetotal15, statetotal16, statetotal17, statetotal18)
+state_09travelexp <- mutate(state_09travelexp_13_18, pct_chg_13_18=(statetotal18-statetotal13)/statetotal13) %>%
+  mutate(., total_chg_13_18=statetotal18-statetotal13) %>%
+  mutate(., pct_chg_17_18=(statetotal18-statetotal17)/statetotal17) %>%
+  mutate(., total_chg_17_18=statetotal18-statetotal17)
+write_csv(state_09travelexp, "state_09travelexp.csv")
+```
+#To see how much each state agency spent on non-conference travel annually
+```
+state_02travelexp_18 <- filter(exp_18, Category=="02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal18=sum(Expenditure))
+state_02travelexp_17 <- filter(exp_17, Category=="02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal17=sum(Expenditure))
+state_02travelexp_16 <- filter(exp_16, Category=="02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal16=sum(Expenditure))
+state_02travelexp_15 <- filter(exp_15, Category=="02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal15=sum(Expenditure))
+state_02travelexp_14 <- filter(exp_14, Category=="02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal14=sum(Expenditure))
+state_02travelexp_13 <- filter(exp_13, Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER" | Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Agency) %>%
+  summarize(statetotal13=sum(Expenditure))
+state_02travelexp_13_18 <- full_join(state_02travelexp_18, state_02travelexp_17, by='Agency') %>%
+  full_join(., state_02travelexp_16, by = 'Agency') %>%
+  full_join(., state_02travelexp_15, by = 'Agency') %>%
+  full_join(., state_02travelexp_14, by = 'Agency') %>%
+  full_join(., state_02travelexp_13, by = 'Agency') %>%
+  select(Agency, statetotal13, statetotal14, statetotal15, statetotal16, statetotal17, statetotal18)
+state_02travelexp <- mutate(state_02travelexp_13_18, pct_chg_13_18=(statetotal18-statetotal13)/statetotal13) %>%
+  mutate(., total_chg_13_18=statetotal18-statetotal13) %>%
+  mutate(., pct_chg_17_18=(statetotal18-statetotal17)/statetotal17) %>%
+  mutate(., total_chg_17_18=statetotal18-statetotal17)
+write_csv(state_02travelexp, "state_02travelexp.csv")
+```
+#To see how much ADEQ spent each year on total travel
+```
+adeq_travelexp <- filter(state_travelexp, Agency=='DEPT OF ENVIRONMENTAL QUALITY')
+```
+#To see how much ADEQ spent each year on conference-related travel
+```
+ADEQ_09exp_18 <- filter(exp_18, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Category) %>%
+  summarize(total18=sum(Expenditure))
+ADEQ_09exp_17 <- filter(exp_17, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Category) %>%
+  summarize(total17=sum(Expenditure))
+ADEQ_09exp_16 <- filter(exp_16, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Category) %>%
+  summarize(total16=sum(Expenditure))
+ADEQ_09exp_15 <- filter(exp_15, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Category) %>%
+  summarize(total15=sum(Expenditure))
+ADEQ_09exp_14 <- filter(exp_14, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Category) %>%
+  summarize(total14=sum(Expenditure))
+ADEQ_09exp_13 <- filter(exp_13, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Category) %>%
+  summarize(total13=sum(Expenditure))
+adeq_09exp <- full_join(ADEQ_09exp_18, ADEQ_09exp_17, by='Category') %>%
+  full_join(., ADEQ_09exp_16, by='Category') %>%
+  full_join(., ADEQ_09exp_15, by='Category') %>%
+  full_join(., ADEQ_09exp_14, by='Category') %>%
+  full_join(., ADEQ_09exp_13, by='Category') %>%
+  select(Category, total13, total14, total15, total16, total17, total18)
+View(adeq_09exp)
+```
+#To see how much ADEQ spent each year on non-conference-related travel
+```
+ADEQ_02exp_18 <- filter(exp_18, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Category) %>%
+  summarize(total18=sum(Expenditure))
+ADEQ_02exp_17 <- filter(exp_17, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Category) %>%
+  summarize(total17=sum(Expenditure))
+ADEQ_02exp_16 <- filter(exp_16, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Category) %>%
+  summarize(total16=sum(Expenditure))
+ADEQ_02exp_15 <- filter(exp_15, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Category) %>%
+  summarize(total15=sum(Expenditure))
+ADEQ_02exp_14 <- filter(exp_14, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Category) %>%
+  summarize(total14=sum(Expenditure))
+ADEQ_02exp_13 <- filter(exp_13, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Category) %>%
+  summarize(total13=sum(Expenditure))
+adeq_02exp <- full_join(ADEQ_02exp_18, ADEQ_02exp_17, by='Category') %>%
+  full_join(., ADEQ_02exp_16, by='Category') %>%
+  full_join(., ADEQ_02exp_15, by='Category') %>%
+  full_join(., ADEQ_02exp_14, by='Category') %>%
+  full_join(., ADEQ_02exp_13, by='Category') %>%
+  select(Category, total13, total14, total15, total16, total17, total18)
+View(adeq_02exp)
+```
+#To see how much individual ADEQ employees spent each year on non-conference-related travel
+```
+adeq_emp_02exp_18 <- filter(exp_18, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Vendor) %>%
+  summarize(total18=sum(Expenditure))
+adeq_emp_02exp_17 <- filter(exp_17, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Vendor) %>%
+  summarize(total17=sum(Expenditure))
+adeq_emp_02exp_16 <- filter(exp_16, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Vendor) %>%
+  summarize(total16=sum(Expenditure))
+adeq_emp_02exp_15 <- filter(exp_15, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Vendor) %>%
+  summarize(total15=sum(Expenditure))
+adeq_emp_02exp_14 <- filter(exp_14, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Vendor) %>%
+  summarize(total14=sum(Expenditure))
+adeq_emp_02exp_13 <- filter(exp_13, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "02 PARKING FEES TRAVEL" | Category=="02 MILEAGE" | Category=="02 OTHER TRAVEL EXPENSES" | Category=="02 MEALS" | Category=="02 LODGING" | Category=="02 GROUND TRANSPORTATION" | Category=="02 CONFERENCES & SEMINAR FEES" | Category=="02 COMMON CARRIER") %>%
+  group_by(Vendor) %>%
+  summarize(total13=sum(Expenditure))
+adeq_emp_02exp <- full_join(adeq_emp_02exp_18, adeq_emp_02exp_17, by='Vendor') %>%
+  full_join(., adeq_emp_02exp_16, by='Vendor') %>%
+  full_join(., adeq_emp_02exp_15, by='Vendor') %>%
+  full_join(., adeq_emp_02exp_14, by='Vendor') %>%
+  full_join(., adeq_emp_02exp_13, by='Vendor') %>%
+  select(Vendor, total13, total14, total15, total16, total17, total18)
+View(adeq_emp_02exp)
+```
+#To see how much individual ADEQ employees spent each year on conference-related travel
+```
+adeq_emp_09exp_18 <- filter(exp_18, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Vendor) %>%
+  summarize(total18=sum(Expenditure))
+adeq_emp_09exp_17 <- filter(exp_17, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Vendor) %>%
+  summarize(total17=sum(Expenditure))
+adeq_emp_09exp_16 <- filter(exp_16, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Vendor) %>%
+  summarize(total16=sum(Expenditure))
+adeq_emp_09exp_15 <- filter(exp_15, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Vendor) %>%
+  summarize(total15=sum(Expenditure))
+adeq_emp_09exp_14 <- filter(exp_14, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Vendor) %>%
+  summarize(total14=sum(Expenditure))
+adeq_emp_09exp_13 <- filter(exp_13, Agency=="DEPT OF ENVIRONMENTAL QUALITY") %>%
+  filter(Category == "09 PARKING FEES AND TRAVEL" | Category=="09 MILEAGE" | Category=="09 OTHER TRAVEL EXPENSES" | Category=="09 MEALS" | Category=="09 LODGING" | Category=="09 GROUND TRANSPORTATION" | Category=="09 CONFERENCE & SEMINAR FEES" | Category=="09 COMMON CARRIER") %>%
+  group_by(Vendor) %>%
+  summarize(total13=sum(Expenditure))
+adeq_emp_09exp <- full_join(adeq_emp_09exp_18, adeq_emp_09exp_17, by='Vendor') %>%
+  full_join(., adeq_emp_09exp_16, by='Vendor') %>%
+  full_join(., adeq_emp_09exp_15, by='Vendor') %>%
+  full_join(., adeq_emp_09exp_14, by='Vendor') %>%
+  full_join(., adeq_emp_09exp_13, by='Vendor') %>%
+  select(Vendor, total13, total14, total15, total16, total17, total18)
+View(adeq_emp_09exp)
+```
+#To visualize a bar chart on changes in ADEQ conference travel expenditures
+```
+library(tidyverse)
+library(DT)
+adeq_09exp_tidy <- adeq_09exp %>%
+  gather(total13, total18, 2:7) %>%
+  rename(year=total13, amount=total18)
+
+adeq_02exp_tidy2 <- rename(adeq_09exp, FY13=total13, FY14=total14, FY15=total15, FY16=total16, FY17=total17, FY18=total18) %>%
+  gather(FY13, FY18, 2:7) %>%
+  rename(year=FY13, amount=FY18)
+
+library(ggplot2)
+adeq_09exp_graphic <- ggplot(data=adeq_09exp_tidy2,
+       aes(x=year, y=amount, fill=Category)) +
+  geom_col() +
+  labs(x="Year", y="Amount, in dollars",
+     title = "Conference Travel Expenditures",
+     subtitle = "Arkansas Department of Environmental Quality, 2013-2018",
+     caption = "Data from transparency.arkansas.gov") +
+  theme_minimal()
+ggsave("adeq_09exp_graphic.png", width=20, height=30, units="cm")
+```
+#To visualize a bar chart on changes in ADEQ non-conference travel expenditures
+```
+library(tidyverse)
+library(DT)
+adeq_02exp_tidy <- adeq_02exp %>%
+  gather(total13, total18, 2:7) %>%
+  rename(year=total13, amount=total18)
+
+adeq_02exp_tidy2 <- rename(adeq_02exp, FY13=total13, FY14=total14, FY15=total15, FY16=total16, FY17=total17, FY18=total18) %>%
+  gather(FY13, FY18, 2:7) %>%
+  rename(year=FY13, amount=FY18)
+
+library(ggplot2)
+adeq_02exp_graphic <-ggplot(data=adeq_02exp_tidy2,
+       aes(x=year, y=amount, fill=Category)) +
+  geom_col() +
+  labs(x="Year", y="Amount, in dollars",
+       title = "Non-Conference Travel Expenditures",
+       subtitle = "Arkansas Department of Environmental Quality, 2013-2018",
+       caption = "Data from transparency.arkansas.gov") +
+  theme_minimal()
+ggsave("adeq_02exp_graphic.png", width=20, height=30, units="cm")
+```
